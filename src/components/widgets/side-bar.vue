@@ -52,21 +52,22 @@ const { list, containerProps, wrapperProps } = useVirtualList(users, {
 
 onMounted(async () => {
   await router.isReady()
-  isPending.value = true
-  console.log(route.query)
   const searchedObjectKey = Object.keys(route.query).find(
     (routeParams) => routeParams === 'username' || routeParams === 'id'
   )
-  const { data } = await getData(
-    typeof route.query[searchedObjectKey] === 'string'
-      ? [route.query[searchedObjectKey]]
-      : route.query[searchedObjectKey],
-    searchedObjectKey
-  )
   if (searchedObjectKey) {
-    searchUser.dispatch('fillUsers', data)
+    isPending.value = true
+    const { data } = await getData(
+      typeof route.query[searchedObjectKey] === 'string'
+        ? [route.query[searchedObjectKey]]
+        : route.query[searchedObjectKey],
+      searchedObjectKey
+    )
+    if (searchedObjectKey) {
+      searchUser.dispatch('fillUsers', data)
+    }
+    isPending.value = false
   }
-  isPending.value = false
 })
 </script>
 <template>
